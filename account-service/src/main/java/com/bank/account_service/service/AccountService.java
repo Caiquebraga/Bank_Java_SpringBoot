@@ -30,4 +30,9 @@ public class AccountService {
     private String generateAccountNumber() {
         return "ACC-" + System.currentTimeMillis();
     }
+
+    public Account getAccountById(Long id) {
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+    }
 }

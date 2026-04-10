@@ -8,4 +8,6 @@ import lombok.Setter;
 public class CreateAccountRequest {
 
     private String holderName;
+
+
 }
