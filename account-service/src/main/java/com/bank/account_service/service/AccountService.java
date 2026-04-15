@@ -1,6 +1,7 @@
 package com.bank.account_service.service;
 
 import com.bank.account_service.dto.CreateAccountRequest;
+import com.bank.account_service.dto.response.AccountResponse;
 import com.bank.account_service.entity.Account;
 import com.bank.account_service.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
 
-    public Account createAccount(CreateAccountRequest request) {
+    public AccountResponse createAccount(CreateAccountRequest request) {
 
         Account account = Account.builder()
                 .accountNumber(generateAccountNumber())
@@ -24,15 +25,29 @@ public class AccountService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+
+        return new AccountResponse(
+                savedAccount.getId(),
+                savedAccount.getHolderName(),
+                savedAccount.getAccountNumber(),
+                savedAccount.getBalance()
+        );
+    }
+
+    public AccountResponse getAccountById(Long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
+        return new AccountResponse(
+                account.getId(),
+                account.getHolderName(),
+                account.getAccountNumber(),
+                account.getBalance()
+        );
     }
 
     private String generateAccountNumber() {
         return "ACC-" + System.currentTimeMillis();
-    }
-
-    public Account getAccountById(Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
     }
 }
